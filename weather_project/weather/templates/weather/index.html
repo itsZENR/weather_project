@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Weather Forecast</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const cityInput = document.getElementById('city-input');
+            const suggestionsBox = document.getElementById('suggestions');
+
+            cityInput.addEventListener('input', function() {
+                let query = this.value;
+                if (query.length > 2) {
+                    fetch(`/autocomplete/?term=${query}`)
+                        .then(response => response.json())
+                        .then(data => {
+                            suggestionsBox.innerHTML = '';
+                            data.forEach(city => {
+                                let option = document.createElement('div');
+                                option.textContent = city;
+                                option.classList.add('suggestion-item');
+                                option.addEventListener('click', function() {
+                                    cityInput.value = city;
+                                    suggestionsBox.innerHTML = '';
+                                });
+                                suggestionsBox.appendChild(option);
+                            });
+                        });
+                } else {
+                    suggestionsBox.innerHTML = '';
+                }
+            });
+        });
+    </script>
+    <style>
+        .suggestions {
+            border: 1px solid #ccc;
+            max-height: 150px;
+            overflow-y: auto;
+            position: absolute;
+        }
+
+        .suggestion-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+    <form method="get" action="">
+        <input type="text" id="city-input" name="city" placeholder="Введите название города" autocomplete="off">
+        <button type="submit">Получить прогноз</button>
+    </form>
+    <div id="suggestions" class="suggestions"></div>
+
+    {% if weather_data %}
+        <h2>Прогноз погоды для {{ weather_data.city }}</h2>
+        <p>Координаты: {{ weather_data.latitude }}, {{ weather_data.longitude }}</p>
+        <ul>
+            {% for entry in weather_data.hourly %}
+                <li>{{ entry.time|date:"d M Y H:i" }}: {{ entry.temperature }}°C</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+</body>
+</html>
