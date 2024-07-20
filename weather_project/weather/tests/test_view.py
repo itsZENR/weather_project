@@ -1,7 +1,7 @@
 from django.test import TestCase, Client
 from django.urls import reverse
 from django.contrib.auth.models import User
-from weather.models import SearchHistory
+from weather.models import SearchHistory, City
 
 
 class WeatherViewsTests(TestCase):
@@ -9,6 +9,7 @@ class WeatherViewsTests(TestCase):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser',
                                              password='testpassword')
+        City.objects.create(name="Москва")
 
     def test_index_view(self):
         response = self.client.get(reverse('index'))
