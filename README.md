@@ -31,5 +31,5 @@ cd weather_project
 ```
 4. Запустите docker-compose.yml
 ```bash
-docker-compose.yml up --build
+docker-compose up --build
 ```
