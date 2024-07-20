@@ -5,6 +5,9 @@ from .models import SearchHistory, City
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+from rest_framework import status
 
 
 def register(request):
@@ -64,3 +67,15 @@ def history(request):
     search_history = SearchHistory.objects.filter(user=request.user)
     return render(request, 'weather/history.html',
                   {'search_history': search_history})
+
+
+@api_view(['GET'])
+def city_search_count(request):
+    city_name = request.GET.get('city')
+    if city_name:
+        count = SearchHistory.objects.filter(city__iexact=city_name).count()
+        return Response({'city': city_name, 'search_count': count},
+                        status=status.HTTP_200_OK)
+    else:
+        return Response({'error': 'City parameter is required'},
+                        status=status.HTTP_400_BAD_REQUEST)
