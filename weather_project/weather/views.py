@@ -1,7 +1,7 @@
 import requests
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
-from .models import SearchHistory
+from .models import SearchHistory, City
 from django.contrib.auth.decorators import login_required
 from datetime import datetime
 from django.contrib.auth.forms import UserCreationForm
@@ -54,9 +54,9 @@ def index(request):
 
 def autocomplete(request):
     if 'term' in request.GET:
-        cities = ["London", "Los Angeles", "Paris", "Berlin"]
-        suggestions = [city for city in cities if city.lower().startswith(request.GET['term'].lower())]
-        return JsonResponse(suggestions, safe=False)
+        term = request.GET['term'].lower()
+        cities = City.objects.filter(name__icontains=term).values_list('name', flat=True)
+        return JsonResponse(list(cities), safe=False)
 
 
 @login_required

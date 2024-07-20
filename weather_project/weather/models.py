@@ -9,3 +9,10 @@ class SearchHistory(models.Model):
 
     def __str__(self):
         return f"{self.city} searched by {self.user.username}"
+
+
+class City(models.Model):
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name

@@ -16,25 +16,25 @@ class WeatherViewsTests(TestCase):
         self.assertTemplateUsed(response, 'weather/index.html')
 
     def test_get_weather(self):
-        response = self.client.get(reverse('index'), {'city': 'Berlin'})
+        response = self.client.get(reverse('index'), {'city': 'Москва'})
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'Прогноз погоды для Berlin')
+        self.assertContains(response, 'Прогноз погоды для Москва')
 
     def test_autocomplete(self):
-        response = self.client.get(reverse('autocomplete'), {'term': 'Ber'})
+        response = self.client.get(reverse('autocomplete'), {'term': 'Мос'})
         self.assertEqual(response.status_code, 200)
         self.assertJSONEqual(
             str(response.content, encoding='utf8'),
-            ['Berlin']
+            ['Москва']
         )
 
     def test_history_view_logged_in(self):
         self.client.login(username='testuser', password='testpassword')
-        SearchHistory.objects.create(user=self.user, city='Berlin')
+        SearchHistory.objects.create(user=self.user, city='Москва')
         response = self.client.get(reverse('history'))
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'weather/history.html')
-        self.assertContains(response, 'Berlin')
+        self.assertContains(response, 'Москва')
 
     def test_history_view_not_logged_in(self):
         response = self.client.get(reverse('history'))
